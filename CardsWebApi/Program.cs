@@ -1,4 +1,5 @@
 using CardsWebApi.Data;
+using CardsWebApi.Data.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseDatabaseMigration<ApiDbContext>();
 
 app.UseHttpsRedirection();
 

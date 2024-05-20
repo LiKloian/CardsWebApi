@@ -1,4 +1,4 @@
-version: '2'
+version: '3.4'
 networks:
   cards:
     driver: bridge
@@ -6,15 +6,16 @@ services:
   cards-web-api:
     image: docker.io/library/cardswebapi
     depends_on:
-     - "cards-web-api-db"
+      cards-web-api-db: 
+        condition: service_started
     container_name: cardswebapi
     ports:
-      - "5009:8080"
+      - "5000:8080"
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      - ConnectionStrings__DefaultConnection=Host=localhost;Port=5432;Username=postgres-user;Password=postgres;Database=CardsDb;
+      - ConnectionStrings__DefaultConnection=Host=cards-web-api-db;Port=5432;Username=apiuser;Password=apiuser;Database=CardsDb;
       - ASPNETCORE_URLS=http://+:8080
     networks:
       - cards
@@ -22,14 +23,16 @@ services:
     image: postgres:latest
     container_name: cards-web-api-db
     environment:
-      - POSTGRES_USER=postgres-user
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=CardsDb
+      POSTGRES_USER: "apiuser"
+      POSTGRES_PASSWORD: "apiuser"
+      POSTGRES_DB: "CardsDb"
     ports:
-      - "5433:5432"
+      - "5435:5432"
+    expose:
+      - "5435"      
     restart: always
     volumes:
-      - cards_web_api_data:/var/lib/postgresql/data
+      - cards_web_api_data:/var/lib/postgresql/data      
     networks:
       - cards
 volumes:
