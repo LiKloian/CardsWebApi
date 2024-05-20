@@ -7,7 +7,7 @@ services:
     image: docker.io/library/cardswebapi
     depends_on:
       cards-web-api-db: 
-        condition: service_started
+        condition: service_healthy
     container_name: cardswebapi
     ports:
       - "5000:8080"
@@ -31,6 +31,8 @@ services:
     expose:
       - "5435"      
     restart: always
+    healthcheck:
+      test: "exit 0"          
     volumes:
       - cards_web_api_data:/var/lib/postgresql/data      
     networks:
